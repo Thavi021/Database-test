@@ -53,27 +53,18 @@ async function loadMessages() {
 
 // ✅ Add message
 async function addMessage() {
-  console.log("Button clicked");
-
   const input = document.getElementById('messageInput');
 
-  if (!input.value) return;
-
-  const { data, error } = await supabaseClient
+  const  if (error) {  const { data, error } = await supabaseClient
+    alert("Error: " + error.message);
+  }
+}
     .from('messages')
     .insert([{ text: input.value }]);
 
-  if (error) {
-    console.error("Insert error:", error);
-    alert("Error inserting message. Check console.");
-    return;
-  }
+  console.log("FULL RESULT:", data, error);
 
-  console.log("Insert success:", data);
 
-  input.value = "";
-  loadMessages();
-}
 
 // ✅ Initial load
 loadMessages();
