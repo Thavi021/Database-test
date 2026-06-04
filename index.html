@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Test</title>
+</head>
+<body>
+
+<h1>Supabase Test App</h1>
+
+<input id="messageInput" placeholder="Type a message" />
+<button onclick="addMessage()">Add</button>
+
+<h2>Messages:</h2>
+<ul id="messagesList"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const SUPABASE_URL = "PASTE_YOURS_HERE";
+const SUPABASE_KEY = "PASTE_YOURS_HERE";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function loadMessages() {
+  const { data } = await supabaseClient
+    .from('messages')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  const list = document.getElementById('messagesList');
+  list.innerHTML = "";
+
+  data.forEach(msg => {
+    const li = document.createElement('li');
+    li.textContent = msg.text;
+    list.appendChild(li);
+  });
+}
+
+async function addMessage() {
+  const input = document.getElementById('messageInput');
+
+  if (!input.value) return;
+
+  await supabaseClient
+    .from('messages')
+    .insert([{ text: input.value }]);
+
+  input.value = "";
+  loadMessages();
+}
+
+loadMessages();
