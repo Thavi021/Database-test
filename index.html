@@ -13,19 +13,33 @@
 <h2>Messages:</h2>
 <ul id="messagesList"></ul>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<!-- ✅ FIXED SUPABASE SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
-const SUPABASE_URL = "https://qhzyesapzldfufygaopz.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoenllc2FwemxkZnVmeWdhb3B6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNzk5ODksImV4cCI6MjA5NTk1NTk4OX0.bm7LJs4cnfDOSU6pQiLWhUGgiSiHPpyvcmcylz1IzYY";
+// ✅ DEBUG: Check script loaded
+console.log("Supabase global:", window.supabase);
 
+// ✅ YOUR KEYS
+const SUPABASE_URL = "https://qhzyesapzldfufygaopz.supabase.co";
+const SUPABASE_KEY = "YOUR_KEY_HERE"; // keep your real key
+
+// ✅ Create client
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// ✅ Load messages
 async function loadMessages() {
-  const { data } = await supabaseClient
+  console.log("Loading messages...");
+
+  const { data, error } = await supabaseClient
     .from('messages')
     .select('*')
     .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Load error:", error);
+    return;
+  }
 
   const list = document.getElementById('messagesList');
   list.innerHTML = "";
@@ -37,17 +51,34 @@ async function loadMessages() {
   });
 }
 
+// ✅ Add message
 async function addMessage() {
+  console.log("Button clicked");
+
   const input = document.getElementById('messageInput');
 
   if (!input.value) return;
 
-  await supabaseClient
+  const { data, error } = await supabaseClient
     .from('messages')
     .insert([{ text: input.value }]);
+
+  if (error) {
+    console.error("Insert error:", error);
+    alert("Error inserting message. Check console.");
+    return;
+  }
+
+  console.log("Insert success:", data);
 
   input.value = "";
   loadMessages();
 }
 
+// ✅ Initial load
 loadMessages();
+
+</script>
+
+</body>
+</html>
