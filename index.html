@@ -13,21 +13,21 @@
 <h2>Messages:</h2>
 <ul id="messagesList"></ul>
 
-<!-- ✅ FIXED SUPABASE SCRIPT -->
+<!-- ✅ CORRECT SUPABASE CDN (IMPORTANT) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
-// ✅ DEBUG: Check script loaded
-console.log("Supabase global:", window.supabase);
+// ✅ DEBUG: confirm Supabase loaded
+console.log("Supabase loaded:", window.supabase);
 
-// ✅ YOUR KEYS
+// ✅ YOUR SUPABASE DETAILS
 const SUPABASE_URL = "https://qhzyesapzldfufygaopz.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoenllc2FwemxkZnVmeWdhb3B6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDM3OTk4OSwiZXhwIjoyMDk1OTU1OTg5fQ.HdqyiWYlujA1XUFPCTQHkr5EZvBTFe78s3gr_N2GIZk"; // keep your real key
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoenllc2FwemxkZnVmeWdhb3B6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNzk5ODksImV4cCI6MjA5NTk1NTk4OX0.bm7LJs4cnfDOSU6pQiLWhUGgiSiHPpyvcmcylz1IzYY"; // keep your real key here
 
-// ✅ Create client
+// ✅ Create Supabase client
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ✅ Load messages
+// ✅ Load messages from DB
 async function loadMessages() {
   console.log("Loading messages...");
 
@@ -51,24 +51,32 @@ async function loadMessages() {
   });
 }
 
-// ✅ Add message
+// ✅ Insert new message into DB
 async function addMessage() {
+  console.log("Button clicked");
+
   const input = document.getElementById('messageInput');
 
-  const  if (error) {  const { data, error } = await supabaseClient
-    alert("Error: " + error.message);
-  }
-}
+  if (!input.value) return;
+
+  const { data, error } = await supabaseClient
     .from('messages')
     .insert([{ text: input.value }]);
 
-  console.log("FULL RESULT:", data, error);
+  console.log("Insert result:", data, error);
 
+  if (error) {
+    alert("Insert failed: " + error.message);
+    console.error(error);
+    return;
+  }
 
+  input.value = "";
+  loadMessages();
+}
 
 // ✅ Initial load
 loadMessages();
-
 </script>
 
 </body>
